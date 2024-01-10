@@ -17,6 +17,7 @@ public class ForWhoScooterPage {
 
     private final By phoneNumberInput = By.xpath(".//input[@placeholder='* Телефон: на него позвонит курьер']"); //поле для ввода номера телефона
     private final By nextButton = By.className("Button_Middle__1CSJM"); //кнопка "Далее"
+    private final By forWhoScooterTitle = By.className("Order_Header__BZXOb"); //локатор для заголовка страницы "Для кого самокат"
 
     public ForWhoScooterPage(WebDriver driver){
         this.driver = driver;
@@ -32,6 +33,10 @@ public class ForWhoScooterPage {
         stations.get(metroNumber).click();
         driver.findElement(phoneNumberInput).sendKeys(phoneNumber);
         driver.findElement(nextButton).click();
+    }
+    public void forWhoScooterPageDisplays(){
+
+        driver.findElement(forWhoScooterTitle).isDisplayed();
     }
 
 

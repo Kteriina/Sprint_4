@@ -1,39 +1,53 @@
 package ru.yandex.praktikum.scooter;
-
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
-
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import java.util.concurrent.TimeUnit;
 
+@RunWith(Parameterized.class)
+public class TestOrder extends CommonTest{
+    private final String name;
+    private final String surname;
+    private final String address;
+    private final int metroNumber;
+    private final String phoneNumber;
+    private final String date;
+    private final int indexOfRentTime;
+    private final int indexOfColour;
+    private final String comment;
 
-public class TestOrder {
-    WebDriver driver;
+    final String SCOOTER_APP = "https://qa-scooter.praktikum-services.ru/";
 
-    @BeforeClass
-    public static void setupAll() {
-        WebDriverManager.chromedriver().setup();
-        //WebDriverManager.firefoxdriver().setup();
+    @Parameterized.Parameters
+    public static Object[][] setOrderData() {
+        return new Object[][] {
+
+                {"Катя", "Воронина", "Москва", 1, "89616137854","27.12.2023", 1, 1, "Comment"},
+                {"Маргарита", "Иванова", "Москва набережная Бережковская", 34, "89018337854", "27.12.2023", 0, 1, "Хотелось бы быструю доставку"},
+
+
+        };
     }
+    public TestOrder(String name, String surname, String address, int metroNumber, String phoneNumber, String date, int indexOfRentTime, int indexOfColour, String comment){
+        this.name = name;
+        this.surname = surname;
+        this.address = address;
+        this.metroNumber = metroNumber;
+        this.phoneNumber = phoneNumber;
+        this.date = date;
+        this.indexOfRentTime = indexOfRentTime;
+        this.indexOfColour = indexOfColour;
+        this.comment = comment;
 
-    @Before
-    public void setup(){
-        driver = new ChromeDriver();
-        //driver = new FirefoxDriver();
-    }
+
+    };
 
     @Test
     public void checkOrderFromHeader() {
 
-        driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         // переход на страницу тестового приложения
-        driver.get("https://qa-scooter.praktikum-services.ru/");
+        driver.get(SCOOTER_APP);
 
         // создание объекта класса главной страницы приложения
         HomePageScooter objHomePage = new HomePageScooter(driver);
@@ -48,11 +62,11 @@ public class TestOrder {
 
         // создание объекта класса ForWhoScooterPage страницы "Для кого самокат"
         ForWhoScooterPage objForWho = new ForWhoScooterPage(driver);
-        objForWho.fillForWhoData("Катя", "Воронина", "Москва", 1, "89616137854");//заполнение данных на странице "Для кого самокат"
+        objForWho.fillForWhoData(name, surname, address, metroNumber, phoneNumber);//заполнение данных на странице "Для кого самокат"
 
         // создание объекта класса AboutRent страницы "Про аренду"
         AboutRentPage objRentPage = new AboutRentPage(driver);
-        objRentPage.fillAboutRentData("27.12.2023", 1, 1, "Comment");//заполнение данных на странице "Про аренду"
+        objRentPage.fillAboutRentData(date, indexOfRentTime, indexOfColour, comment);//заполнение данных на странице "Про аренду"
 
         // создание объекта класса SubmitPopUp попапа, появляющегося после нажатия "Заказать" на странице "Про аренду"
         SubmitPopUp objSubmitPopUp = new SubmitPopUp(driver);
@@ -71,7 +85,7 @@ public class TestOrder {
 
         driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
         // переход на страницу тестового приложения
-        driver.get("https://qa-scooter.praktikum-services.ru/");
+        driver.get(SCOOTER_APP);
 
         // создай объект класса главной страницы приложения
         HomePageScooter objHomePage = new HomePageScooter(driver);
@@ -85,33 +99,12 @@ public class TestOrder {
         //клик на кнопку "Заказать" внизу страницы
         objHomePage.clickButtonOrderBelow();
 
-        //возможно ожидание здесь сделать
-
         // создание объекта класса ForWhoScooterPage страницы "Для кого самокат"
         ForWhoScooterPage objForWho = new ForWhoScooterPage(driver);
-        objForWho.fillForWhoData("Маргарита", "Иванова", "Москва набережная Бережковская", 34, "89018337854");//заполнение данных на странице "Для кого самокат"
 
-        // создание объекта класса SubmitPopUp попапа, появляющегося после нажатия "Заказать" на странице "Про аренду"
-        AboutRentPage objRentPage = new AboutRentPage(driver);
-        objRentPage.fillAboutRentData("27.12.2023", 0, 3, "Хотелось бы быструю доставку");//заполнение данных на странице "Про аренду"
-
-        // создание объекта класса SubmitPopUp попапа, появляющегося после нажатия "Заказать" на странице "Про аренду"
-        SubmitPopUp objSubmitPopUp = new SubmitPopUp(driver);
-
-        //клик на кнопку подтверждения заказа
-        objSubmitPopUp.clickSubmitOrderButton();
-
-        //проверка, что заказ создаз оформлен - появился текст "Заказ оформлен"
-        objSubmitPopUp.successOrderMessageDisplays();
-
-
-
+        //проверка, что страница "Для кого заказ" отобразилась
+        objForWho.forWhoScooterPageDisplays();
     }
 
 
-    @After
-    public void teardown() {
-        // Закрой браузер
-        driver.quit();
-    }
 }

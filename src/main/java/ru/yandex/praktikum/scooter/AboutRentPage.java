@@ -23,12 +23,12 @@ public class AboutRentPage {
     }
 
     //метод для заполнения данных на странице "Про аренду"
-    public void fillAboutRentData(String date, int index, int i, String comment){
+    public void fillAboutRentData(String date, int indexOfRentTime, int indexOfColour, String comment){
         driver.findElement(dateInput).sendKeys(date);
         driver.findElement(twentySevenDecember).click();
         driver.findElement(rentTimeDropDown).click();
-        driver.findElement(rentTimeValues[index]).click();
-        driver.findElement(colourValues[index]).click();
+        driver.findElement(rentTimeValues[indexOfRentTime]).click();
+        driver.findElement(colourValues[indexOfColour]).click();
         driver.findElement(commentInput).sendKeys(comment);
         driver.findElement(orderButton).click();
     }
